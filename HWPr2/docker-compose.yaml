@@ -1,0 +1,28 @@
+services:
+  reverse-proxy:
+    build:
+      context: ./proxy
+      dockerfile: Dockerfile
+    container_name: auth_reverse_proxy
+    ports:
+      - "80:80"
+    environment:
+      - JWT_SECRET=super-secret-key-internet-engineering-1405
+      - BACKEND_URL=http://legacy-httpbin:8080
+    networks:
+      - internal_network
+    depends_on:
+      - legacy-httpbin
+
+  legacy-httpbin:
+    image: ghcr.io/mccutchen/go-httpbin
+    container_name: legacy_httpbin
+    expose:
+      - "8080" 
+    networks:
+      - internal_network
+
+networks:
+  internal_network:
+    driver: bridge
+
